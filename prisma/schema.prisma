@@ -12,11 +12,61 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  OWNER
+}
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum Status {
+  BANED
+  APPROVED
+}
+
+model ShopOwner {
+  id         String    @id @default(uuid())
+  name       String
+  userName   String?   @unique
+  email      String    @unique
+  password   String
+  role       Role?     @default(OWNER)
+  phone      String?
+  profilePic String?
+  isVerified Boolean?  @default(false)
+  status     Status?   @default(APPROVED)
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+  shop       Shop?
+}
+
+model Shop {
+  shopId      String    @id @default(uuid())
+  shopOwner   ShopOwner @relation(fields: [ownerId], references: [id])
+  ownerId     String    @unique
+  inventory   Inventory @relation(fields: [inventoryId], references: [inventoryId])
+  inventoryId String    @unique
+  shopName    String
+  shopAddress String?
+  shopPhone   String?
+  shopEmail   String
+  shopType    String?
+}
+
+model Product {
+  productId     String     @id @default(uuid())
+  name          String
+  sku           String
+  costPrice     String
+  sellingPrice  String
+  texPercentage String
+  createAt      DateTime   @default(now())
+  inventory     Inventory?
+}
+
+model Inventory {
+  inventoryId       String   @id @default(uuid())
+  product           Product  @relation(fields: [productId], references: [productId])
+  productId         String   @unique
+  availableQuantity String
+  reOrderLevel      String
+  updatedAt         DateTime @updatedAt
+  shop              Shop?
 }
