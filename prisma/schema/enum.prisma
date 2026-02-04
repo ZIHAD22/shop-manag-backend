@@ -1,0 +1,9 @@
+enum Role {
+    OWNER
+    ADMIN
+}
+
+enum Status {
+    BANED
+    APPROVED
+}

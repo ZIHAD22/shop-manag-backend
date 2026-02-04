@@ -1,0 +1,10 @@
+model Inventory {
+    inventoryId       String   @id @default(uuid())
+    product           Product  @relation(fields: [productId], references: [productId])
+    shop              Shop     @relation(fields: [shopId], references: [shopId])
+    shopId            String
+    productId         String   @unique
+    availableQuantity String
+    reOrderLevel      String
+    updatedAt         DateTime @updatedAt
+}

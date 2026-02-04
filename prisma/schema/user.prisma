@@ -1,0 +1,24 @@
+model Auth {
+    id          String     @id @default(uuid())
+    userName    String?    @unique
+    email       String     @unique
+    password    String
+    role        Role?      @default(OWNER)
+    otpVerified Boolean?   @default(false)
+    status      Status?    @default(APPROVED)
+    createdAt   DateTime?  @default(now())
+    updatedAt   DateTime?  @updatedAt
+    shopOwner   ShopOwner?
+}
+
+model ShopOwner {
+    id         String    @id @default(uuid())
+    name       String
+    email      String    @unique
+    phone      String?
+    profilePic String?
+    createdAt  DateTime? @default(now())
+    updatedAt  DateTime? @updatedAt
+    user       Auth      @relation(fields: [email], references: [email])
+    shop       Shop?
+}

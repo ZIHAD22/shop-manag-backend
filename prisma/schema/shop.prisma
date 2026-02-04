@@ -1,0 +1,11 @@
+model Shop {
+    shopId      String      @id @default(uuid())
+    ownerId     String      @unique
+    shopName    String
+    shopAddress String?
+    shopPhone   String?
+    shopEmail   String
+    shopType    String?
+    shopOwner   ShopOwner   @relation(fields: [ownerId], references: [id])
+    inventories Inventory[]
+}
