@@ -27,6 +27,7 @@ export const createShopOwner = catchAsync(
     });
 
     sendResponse(res, {
+      statusCode: 201,
       success: true,
       message: "Shop Owner Create Successfully",
       data: result,

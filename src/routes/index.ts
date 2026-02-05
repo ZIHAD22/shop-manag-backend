@@ -3,6 +3,7 @@ import { shopOwnerRouter } from "../modules/user/user.routes";
 import { shopRouter } from "../modules/shop/shop.routes";
 import { inventoryRouter } from "../modules/inventory/inventory.routes";
 import { productRouter } from "../modules/product/product.routes";
+import authRouter from "../modules/auth/auth.routes";
 const router = Router();
 
 const moduleRoute = [
@@ -21,6 +22,10 @@ const moduleRoute = [
   {
     path: "/product",
     route: productRouter,
+  },
+  {
+    path: "/auth",
+    route: authRouter,
   },
 ];
 

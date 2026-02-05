@@ -4,6 +4,7 @@ import prisma from "../../config/db";
 import z from "zod";
 import { create } from "domain";
 import { createAccessToken } from "../../utils/createAccessToken";
+import config from "../../config";
 
 const createShopOwner = async (
   payload: z.infer<typeof shopOwnerValidation.createShopOwnerValidation>,
@@ -36,13 +37,13 @@ const createShopOwner = async (
 
   const accessToken = createAccessToken(
     { email, role: result.role },
-    "asdasq2323",
+    config.access_secret as string,
     "1d",
   );
 
   const refreshToken = createAccessToken(
     { email, role: result.role },
-    "asawqeerrytttyb",
+    config.refresh_secret as string,
     "34d",
   );
 
