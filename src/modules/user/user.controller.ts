@@ -9,15 +9,27 @@ export const createShopOwner = catchAsync(
     const salt = await bcrypt.genSalt(10);
     req.body.password = await bcrypt.hash(req.body.password, salt);
 
-    const createShopOwnerData = await shopOwnerServices.createShopOwner(
-      req.body,
-    );
+    const { result, refreshToken, accessToken } =
+      await shopOwnerServices.createShopOwner(req.body);
+
+    res.cookie("accessToken", accessToken, {
+      secure: true,
+      httpOnly: true,
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60,
+    });
+
+    res.cookie("refreshToken", accessToken, {
+      secure: true,
+      httpOnly: true,
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60,
+    });
 
     sendResponse(res, {
       success: true,
       message: "Shop Owner Create Successfully",
-      data: createShopOwnerData,
-      // data: {},
+      data: result,
     });
   },
 );
