@@ -37,7 +37,7 @@ const authLogin = async (payload: z.infer<typeof authValidation.authLogin>) => {
     "34d",
   );
 
-  return user;
+  return { user: { ...user, password: "" }, accessToken, refreshToken };
 };
 
 export const authServices = {
