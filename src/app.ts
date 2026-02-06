@@ -3,6 +3,8 @@ import cors from "cors";
 import prisma from "./config/db";
 import router from "./routes";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
+import cookieParser from "cookie-parser";
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -21,6 +23,7 @@ connectToDB();
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/v1", router);
 

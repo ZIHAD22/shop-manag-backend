@@ -2,8 +2,9 @@ import bcrypt from "bcryptjs";
 import z from "zod";
 import { authValidation } from "./auth.validation";
 import prisma from "../../config/db";
-import { createAccessToken } from "../../utils/createAccessToken";
 import config from "../../config";
+import { tokenHelper } from "../../utils/tokenHelper";
+import AppError from "../../error/AppError";
 
 const authLogin = async (payload: z.infer<typeof authValidation.authLogin>) => {
   const user = await prisma.auth.findFirst({
@@ -22,19 +23,19 @@ const authLogin = async (payload: z.infer<typeof authValidation.authLogin>) => {
   const isCorrectPass = await bcrypt.compare(payload.password, user.password);
 
   if (!isCorrectPass) {
-    throw new Error("Wrong Credential!");
+    throw new AppError(200, "Wrong Credential!");
   }
 
-  const accessToken = createAccessToken(
+  const accessToken = tokenHelper.createAccessToken(
     { email: user.email, role: user.role },
     config.access_secret as string,
-    "1d",
+    config.accessTokenExpiresIn as string,
   );
 
-  const refreshToken = createAccessToken(
+  const refreshToken = tokenHelper.createAccessToken(
     { email: user.email, role: user.role },
     config.refresh_secret as string,
-    "34d",
+    config.refreshTokenExpiresIn as string,
   );
 
   return { user: { ...user, password: "" }, accessToken, refreshToken };

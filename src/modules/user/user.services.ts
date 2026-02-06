@@ -1,9 +1,9 @@
+import { tokenHelper } from "./../../utils/tokenHelper";
 import { shopOwnerValidation } from "./user.validation";
 import { Prisma, ShopOwner } from "@prisma/client";
 import prisma from "../../config/db";
 import z from "zod";
 import { create } from "domain";
-import { createAccessToken } from "../../utils/createAccessToken";
 import config from "../../config";
 
 const createShopOwner = async (
@@ -35,16 +35,16 @@ const createShopOwner = async (
     };
   });
 
-  const accessToken = createAccessToken(
+  const accessToken = tokenHelper.createAccessToken(
     { email, role: result.role },
     config.access_secret as string,
-    "1d",
+    config.accessTokenExpiresIn as string,
   );
 
-  const refreshToken = createAccessToken(
+  const refreshToken = tokenHelper.createAccessToken(
     { email, role: result.role },
     config.refresh_secret as string,
-    "34d",
+    config.refreshTokenExpiresIn as string,
   );
 
   return { result, accessToken, refreshToken };

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
+import config from "../config";
 
 const globalErrorHandler = (
   err: any,
@@ -7,8 +8,10 @@ const globalErrorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
-  console.log(err);
-  let statusCode = httpStatus.INTERNAL_SERVER_ERROR;
+  console.log(err.name);
+  let statusCode = err.statusCode
+    ? err.statusCode
+    : httpStatus.INTERNAL_SERVER_ERROR;
   let success = false;
   let message = err.message || "Something went wrong!";
   let error = err;
@@ -16,7 +19,8 @@ const globalErrorHandler = (
   res.status(statusCode).json({
     success,
     message,
-    error,
+    error: config.nodeEnv === "dev" ? error : null,
+    stack: config.nodeEnv === "dev" ? err?.stack : null,
   });
 };
 
