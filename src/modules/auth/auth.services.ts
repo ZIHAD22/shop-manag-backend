@@ -26,14 +26,20 @@ const authLogin = async (payload: z.infer<typeof authValidation.authLogin>) => {
     throw new AppError(200, "Wrong Credential!");
   }
 
+  const shopOwner = await prisma.shopOwner.findFirst({
+    where: {
+      email: user.email,
+    },
+  });
+
   const accessToken = tokenHelper.createAccessToken(
-    { email: user.email, role: user.role },
+    { ownerId: shopOwner?.id, email: user.email, role: user.role },
     config.access_secret as string,
     config.accessTokenExpiresIn as string,
   );
 
   const refreshToken = tokenHelper.createAccessToken(
-    { email: user.email, role: user.role },
+    { ownerId: shopOwner?.id, email: user.email, role: user.role },
     config.refresh_secret as string,
     config.refreshTokenExpiresIn as string,
   );

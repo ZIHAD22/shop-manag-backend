@@ -36,13 +36,13 @@ const createShopOwner = async (
   });
 
   const accessToken = tokenHelper.createAccessToken(
-    { email, role: result.role },
+    { ownerId: result.id, email: result.email, role: result.role },
     config.access_secret as string,
     config.accessTokenExpiresIn as string,
   );
 
   const refreshToken = tokenHelper.createAccessToken(
-    { email, role: result.role },
+    { ownerId: result.id, email: result.email, role: result.role },
     config.refresh_secret as string,
     config.refreshTokenExpiresIn as string,
   );

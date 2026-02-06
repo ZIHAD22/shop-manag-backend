@@ -3,7 +3,7 @@ import { productServices } from "./product.services";
 import catchAsync from "../../utils/catchAsync";
 
 const createProduct = catchAsync(async (req: Request, res: Response) => {
-  const result = await productServices.createProduct(req.body);
+  const result = await productServices.createProduct(req.body, req?.user);
   res.status(201).json(result);
 });
 

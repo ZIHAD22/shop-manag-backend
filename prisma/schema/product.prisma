@@ -1,10 +1,12 @@
 model Product {
     productId     String     @id @default(uuid())
     name          String
+    category      String
+    variant       String
     sku           String
-    costPrice     String
-    sellingPrice  String
-    texPercentage String
+    costPrice     Int
+    sellingPrice  Int
+    texPercentage Int
     createAt      DateTime   @default(now())
     inventory     Inventory?
 }
