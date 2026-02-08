@@ -14,6 +14,18 @@ const createShopSchema = z.object({
   shopType: z.string().min(3, "Shop type is required"),
 });
 
+export const updateShopSchema = z.object({
+  shopName: z.string().min(3).optional(),
+  shopAddress: z.string().min(5).optional(),
+  shopPhone: z
+    .string()
+    .regex(/^\+8801[3-9]\d{8}$/)
+    .optional(),
+  shopEmail: z.string().email().optional(),
+  shopType: z.string().min(3).optional(),
+});
+
 export const shopValidation = {
   createShopSchema,
+  updateShopSchema,
 };
