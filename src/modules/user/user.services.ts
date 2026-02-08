@@ -1,9 +1,9 @@
 import { tokenHelper } from "./../../utils/tokenHelper";
 import { shopOwnerValidation } from "./user.validation";
+import { authServices } from "../auth/auth.services";
 import { Prisma, ShopOwner } from "@prisma/client";
 import prisma from "../../config/db";
 import z from "zod";
-import { create } from "domain";
 import config from "../../config";
 
 const createShopOwner = async (
@@ -12,13 +12,16 @@ const createShopOwner = async (
   const { name, email, userName, phone } = payload.shopOwner;
 
   const result = await prisma.$transaction(async (tx) => {
-    const user = await tx.auth.create({
+    // call from auth module
+    const user = await authServices.createAuthUser({
+      tx,
       data: {
         userName,
         email,
         password: payload.password,
       },
     });
+
     const shopOwner = await tx.shopOwner.create({
       data: {
         name,

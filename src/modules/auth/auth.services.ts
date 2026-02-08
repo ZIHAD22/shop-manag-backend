@@ -5,6 +5,29 @@ import prisma from "../../config/db";
 import config from "../../config";
 import { tokenHelper } from "../../utils/tokenHelper";
 import AppError from "../../error/AppError";
+import { PrismaTransactionalClient } from "./auth.interface";
+
+const createAuthUser = async ({
+  tx,
+  data,
+}: {
+  tx: PrismaTransactionalClient;
+  data: {
+    userName: string;
+    email: string;
+    password: string;
+  };
+}) => {
+  const result = tx.auth.create({
+    data: {
+      userName: data.userName,
+      email: data.email,
+      password: data.password,
+    },
+  });
+
+  return result;
+};
 
 const authLogin = async (payload: z.infer<typeof authValidation.authLogin>) => {
   const user = await prisma.auth.findFirst({
@@ -49,4 +72,5 @@ const authLogin = async (payload: z.infer<typeof authValidation.authLogin>) => {
 
 export const authServices = {
   authLogin,
+  createAuthUser,
 };
