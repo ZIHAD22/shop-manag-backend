@@ -3,7 +3,10 @@ import { shopServices } from "./shop.services";
 import catchAsync from "../../utils/catchAsync";
 
 const createShop = catchAsync(async (req: Request, res: Response) => {
-  const result = await shopServices.createShop(req.body);
+  const result = await shopServices.createShop({
+    ...req.body,
+    ownerId: req?.user?.ownerId,
+  });
 
   return res.status(201).json(result);
 });
