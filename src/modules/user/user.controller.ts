@@ -35,6 +35,60 @@ export const createShopOwner = catchAsync(
   },
 );
 
+const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+  const result = await shopOwnerServices.getMyProfile(req?.user?.ownerId);
+
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+});
+
+const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
+  const result = await shopOwnerServices.updateMyProfile(
+    req?.user?.ownerId,
+    req.body,
+  );
+
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+});
+
+const deleteMyAccount = catchAsync(async (req: Request, res: Response) => {
+  await shopOwnerServices.deleteMyAccount(req?.user?.ownerId);
+
+  res.status(204).json({
+    success: true,
+  });
+});
+
+const getAllShopOwners = catchAsync(async (_req: Request, res: Response) => {
+  const result = await shopOwnerServices.getAllShopOwners();
+
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+});
+
+const getShopOwnerById = catchAsync(async (req: Request, res: Response) => {
+  const { ownerId } = req.params;
+
+  const result = await shopOwnerServices.getShopOwnerById(ownerId as string);
+
+  res.status(200).json({
+    success: true,
+    data: result,
+  });
+});
+
 export const shopOwnerController = {
   createShopOwner,
+  getMyProfile,
+  updateMyProfile,
+  deleteMyAccount,
+  getAllShopOwners,
+  getShopOwnerById,
 };
