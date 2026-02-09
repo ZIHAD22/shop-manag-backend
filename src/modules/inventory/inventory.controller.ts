@@ -44,7 +44,7 @@ const deleteInventory = catchAsync(async (req: Request, res: Response) => {
     req?.user?.ownerId,
   );
 
-  res.status(204).json({ success: true });
+  res.status(200).json({ success: true });
 });
 
 export const inventoryController = {
