@@ -12,6 +12,12 @@ export const createInventorySchema = z.object({
     .regex(/^\d+$/, "reOrderLevel must be a numeric string"),
 });
 
+export const updateInventorySchema = z.object({
+  availableQuantity: z.string().regex(/^\d+$/).optional(),
+  reOrderLevel: z.string().regex(/^\d+$/).optional(),
+});
+
 export const inventoryValidation = {
   createInventorySchema,
+  updateInventorySchema,
 };

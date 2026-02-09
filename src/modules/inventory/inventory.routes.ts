@@ -7,12 +7,29 @@ import { inventoryValidation } from "./inventory.validation";
 
 const router = Router();
 
-// deprecated route
-router.post(
-  "/",
+// GET all inventories of my shop
+router.get("/", auth(Role.OWNER), inventoryController.getMyInventories);
+
+// GET inventory by product
+router.get(
+  "/product/:productId",
   auth(Role.OWNER),
-  validateRequest(inventoryValidation.createInventorySchema),
-  inventoryController.createInventory,
+  inventoryController.getInventoryByProduct,
+);
+
+// UPDATE inventory
+router.patch(
+  "/:inventoryId",
+  auth(Role.OWNER),
+  validateRequest(inventoryValidation.updateInventorySchema),
+  inventoryController.updateInventory,
+);
+
+// DELETE inventory
+router.delete(
+  "/:inventoryId",
+  auth(Role.OWNER),
+  inventoryController.deleteInventory,
 );
 
 export const inventoryRouter = router;
