@@ -1,4 +1,3 @@
-import { Prisma, Product } from "@prisma/client";
 import prisma from "../../config/db";
 import generateSkuId from "../../utils/generateSkuId";
 import AppError from "../../error/AppError";

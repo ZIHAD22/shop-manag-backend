@@ -5,7 +5,7 @@ import prisma from "../../config/db";
 import config from "../../config";
 import { tokenHelper } from "../../utils/tokenHelper";
 import AppError from "../../error/AppError";
-import { PrismaTransactionalClient } from "./auth.interface";
+import { PrismaTransactionalClient } from "../../types";
 
 const createAuthUser = async ({
   tx,

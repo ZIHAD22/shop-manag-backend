@@ -1,7 +1,6 @@
 import { tokenHelper } from "./../../utils/tokenHelper";
 import { shopOwnerValidation } from "./user.validation";
 import { authServices } from "../auth/auth.services";
-import { Prisma, ShopOwner } from "@prisma/client";
 import prisma from "../../config/db";
 import z from "zod";
 import config from "../../config";

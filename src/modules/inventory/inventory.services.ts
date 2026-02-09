@@ -1,4 +1,4 @@
-import { Inventory, Prisma } from "@prisma/client";
+import { Inventory } from "../../generated/prisma/client";
 import prisma from "../../config/db";
 import { PrismaTransactionalClient } from "../../types";
 import AppError from "../../error/AppError";

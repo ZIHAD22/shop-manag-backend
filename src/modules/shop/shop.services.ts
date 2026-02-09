@@ -2,7 +2,6 @@ import prisma from "../../config/db";
 import z from "zod";
 import { shopValidation } from "./shop.validation";
 import AppError from "../../error/AppError";
-import { Prisma } from "@prisma/client";
 
 type CreateShopPayload = z.infer<typeof shopValidation.createShopSchema> & {
   ownerId: string;
