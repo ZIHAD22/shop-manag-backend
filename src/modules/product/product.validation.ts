@@ -21,6 +21,8 @@ const createProduct = z.object({
     .string()
     .regex(/^\d+%$/, "Tax must be like 5%")
     .transform((v) => Number(v.replace("%", ""))),
+  availableQuantity: z.string(),
+  reOrderLevel: z.string(),
 });
 
 export const productValidation = {
