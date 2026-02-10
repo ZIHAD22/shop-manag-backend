@@ -5,10 +5,12 @@ import { historyController } from "./history.controller";
 
 const router = Router();
 
-router.post(
-  "/",
-  validateRequest(historyValidation.createHistorySchema),
-  historyController.createHistory,
+router.get("/:id", historyController.getHistoryById);
+router.get(
+  "/inventory/:inventoryId",
+  historyController.getHistoryByInventoryId,
 );
+router.get("/product/:productId", historyController.getHistoryByProductId);
+router.get("/performer/:email", historyController.getHistoryByPerformer);
 
 export const historyRouter = router;

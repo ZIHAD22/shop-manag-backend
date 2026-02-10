@@ -44,7 +44,7 @@ const getInventoryByProductId = async (productId: string, ownerId: string) => {
       productId,
       shopId: shop.shopId,
     },
-    include: { product: true },
+    include: { product: true, histories: true },
   });
 
   if (!inventory) {

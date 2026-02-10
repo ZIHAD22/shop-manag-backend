@@ -26,6 +26,42 @@ const createHistory = async ({
   });
 };
 
+const getHistoriesById = async (id: string) => {
+  return await prisma.history.findFirst({
+    where: {
+      historyId: id,
+    },
+  });
+};
+
+const getHistoriesByInventoryId = async (id: string) => {
+  return await prisma.history.findMany({
+    where: {
+      inventoryId: id,
+    },
+  });
+};
+
+const getHistoriesByProductId = async (id: string) => {
+  return await prisma.history.findMany({
+    where: {
+      productId: id,
+    },
+  });
+};
+
+const getHistoriesByPerformer = async (email: string) => {
+  return await prisma.history.findMany({
+    where: {
+      performerEmail: email,
+    },
+  });
+};
+
 export const historyServices = {
   createHistory,
+  getHistoriesById,
+  getHistoriesByInventoryId,
+  getHistoriesByProductId,
+  getHistoriesByPerformer,
 };
