@@ -1,3 +1,4 @@
+import { historyRouter } from "./../modules/history/history.routes";
 import { Router } from "express";
 import { shopOwnerRouter } from "../modules/user/user.routes";
 import { shopRouter } from "../modules/shop/shop.routes";
@@ -26,6 +27,10 @@ const moduleRoute = [
   {
     path: "/auth",
     route: authRouter,
+  },
+  {
+    path: "/history",
+    route: historyRouter,
   },
 ];
 

@@ -4,6 +4,8 @@ import AppError from "../../error/AppError";
 import { inventoryServices } from "../inventory/inventory.services";
 import z from "zod";
 import { productValidation } from "./product.validation";
+import { historyServices } from "../history/history.services";
+import { InventoryActionType } from "../../generated/prisma/enums";
 
 const createProduct = async (
   {
@@ -28,13 +30,6 @@ const createProduct = async (
     throw new AppError(400, "Please create a shop and try again!");
   }
 
-  // const result = prisma.product.create({
-  //   data: {
-  //     ...payload,
-  //     sku: generateSkuId(payload.category, payload.name, payload.variant),
-  //   },
-  // });
-
   const result = prisma.$transaction(async (tx) => {
     const product = await tx.product.create({
       data: {
@@ -55,6 +50,22 @@ const createProduct = async (
         productId: product.productId,
         availableQuantity,
         reOrderLevel,
+      },
+    });
+
+    const history = await historyServices.createHistory({
+      tx,
+      payload: {
+        inventoryId: inventory.inventoryId,
+        productId: product.productId,
+        actionType: InventoryActionType.INIT,
+        quantityAfter: inventory.availableQuantity,
+        quantityBefore: 0,
+        quantityChange: inventory.availableQuantity,
+        shopId: shop.shopId,
+        note: "Init the inventory",
+        referenceId: "Init the inventory",
+        performerEmail: user.email,
       },
     });
 

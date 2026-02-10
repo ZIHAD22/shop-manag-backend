@@ -6,7 +6,11 @@ import { shopOwnerController } from "./user.controller";
 import { Role } from "../../generated/prisma/enums";
 
 const router = Router();
-
+router.post(
+  "/",
+  validateRequest(shopOwnerValidation.createShopOwnerValidation),
+  shopOwnerController.createShopOwner,
+);
 // MY PROFILE
 router.get("/me", auth(Role.OWNER), shopOwnerController.getMyProfile);
 

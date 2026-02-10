@@ -1,15 +1,21 @@
 import { Request, Response } from "express";
 import { shopServices } from "./shop.services";
 import catchAsync from "../../utils/catchAsync";
+import sendResponse from "../../utils/sendResponse";
 
 const createShop = catchAsync(async (req: Request, res: Response) => {
+  console.log(req.user);
   const result = await shopServices.createShop({
     ...req.body,
     ownerId: req?.user?.ownerId,
   });
 
-  res.status(201).json({
+  console.log(result);
+
+  sendResponse(res, {
+    statusCode: 201,
     success: true,
+    message: "Data created successfully",
     data: result,
   });
 });
@@ -17,8 +23,10 @@ const createShop = catchAsync(async (req: Request, res: Response) => {
 const getMyShop = catchAsync(async (req: Request, res: Response) => {
   const result = await shopServices.findMyShop(req?.user?.ownerId);
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: 200,
     success: true,
+    message: "Data fetched successfully",
     data: result,
   });
 });
@@ -28,8 +36,10 @@ const getShopById = catchAsync(async (req: Request, res: Response) => {
 
   const result = await shopServices.findShopById(shopId as string);
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: 200,
     success: true,
+    message: "Data fetched successfully",
     data: result,
   });
 });
@@ -37,8 +47,10 @@ const getShopById = catchAsync(async (req: Request, res: Response) => {
 const getAllShops = catchAsync(async (_req: Request, res: Response) => {
   const result = await shopServices.findAllShop();
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: 200,
     success: true,
+    message: "Data fetched successfully",
     data: result,
   });
 });
@@ -52,8 +64,10 @@ const updateShop = catchAsync(async (req: Request, res: Response) => {
     req.body,
   );
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: 200,
     success: true,
+    message: "Data updated successfully",
     data: result,
   });
 });
@@ -61,10 +75,16 @@ const updateShop = catchAsync(async (req: Request, res: Response) => {
 const deleteShop = catchAsync(async (req: Request, res: Response) => {
   const { shopId } = req.params;
 
-  await shopServices.deleteShop(shopId as string, req?.user?.ownerId);
+  const result = await shopServices.deleteShop(
+    shopId as string,
+    req?.user?.ownerId,
+  );
 
-  res.status(204).json({
+  sendResponse(res, {
+    statusCode: 200,
     success: true,
+    message: "Data deleted successfully",
+    data: result,
   });
 });
 

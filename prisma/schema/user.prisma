@@ -9,6 +9,7 @@ model Auth {
     createdAt   DateTime?  @default(now())
     updatedAt   DateTime?  @updatedAt
     shopOwner   ShopOwner?
+    histories   History[]
 }
 
 model ShopOwner {
@@ -19,6 +20,6 @@ model ShopOwner {
     profilePic String?
     createdAt  DateTime? @default(now())
     updatedAt  DateTime? @updatedAt
-    user       Auth      @relation(fields: [email], references: [email] , onDelete: Cascade)
+    user       Auth      @relation(fields: [email], references: [email], onDelete: Cascade)
     shop       Shop?
 }

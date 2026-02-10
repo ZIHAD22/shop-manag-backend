@@ -13,14 +13,15 @@ const createInventory = async ({
   payload: {
     productId: string;
     shopId: string;
-    availableQuantity: string;
-    reOrderLevel: string;
+    availableQuantity: number;
+    reOrderLevel: number;
   };
 }): Promise<Inventory> => {
   return await tx.inventory.create({
     data: payload,
     include: {
       product: true,
+      histories: true,
     },
   });
 };

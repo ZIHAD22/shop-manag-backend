@@ -7,22 +7,13 @@ const createProduct = z.object({
 
   variant: z.string().min(1, "Variant is required"), // 5kg, 1L, 500ml, packet, bottle
 
-  costPrice: z
-    .string()
-    .regex(/^\d+$/, "Cost price must be a number")
-    .transform(Number),
+  costPrice: z.number(),
 
-  sellingPrice: z
-    .string()
-    .regex(/^\d+$/, "Selling price must be a number")
-    .transform(Number),
+  sellingPrice: z.number(),
 
-  texPercentage: z
-    .string()
-    .regex(/^\d+%$/, "Tax must be like 5%")
-    .transform((v) => Number(v.replace("%", ""))),
-  availableQuantity: z.string(),
-  reOrderLevel: z.string(),
+  texPercentage: z.number(),
+  availableQuantity: z.number(),
+  reOrderLevel: z.number(),
 });
 
 export const productValidation = {

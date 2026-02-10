@@ -13,8 +13,8 @@ export const createInventorySchema = z.object({
 });
 
 export const updateInventorySchema = z.object({
-  availableQuantity: z.string().regex(/^\d+$/).optional(),
-  reOrderLevel: z.string().regex(/^\d+$/).optional(),
+  availableQuantity: z.number().optional(),
+  reOrderLevel: z.number().optional(),
 });
 
 export const inventoryValidation = {

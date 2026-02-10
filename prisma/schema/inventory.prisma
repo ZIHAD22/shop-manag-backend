@@ -4,8 +4,8 @@ model Inventory {
     shop              Shop      @relation(fields: [shopId], references: [shopId])
     shopId            String
     productId         String    @unique
-    availableQuantity String
-    reOrderLevel      String
+    availableQuantity Int
+    reOrderLevel      Int
     updatedAt         DateTime  @updatedAt
     histories         History[]
 }

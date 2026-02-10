@@ -11,10 +11,13 @@ type UpdateShopPayload = z.infer<typeof shopValidation.updateShopSchema>;
 
 const createShop = async (payload: CreateShopPayload) => {
   const existingShop = await prisma.shop.findFirst({
-    where: { ownerId: payload.ownerId },
+    where: {
+      ownerId: payload.ownerId,
+    },
   });
 
   if (existingShop) {
+    console.log(existingShop);
     throw new AppError(409, "User already has a shop");
   }
 

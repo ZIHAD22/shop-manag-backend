@@ -14,9 +14,10 @@ model History {
     referenceId String?
     note        String?
 
-    performedBy String
-    performedAt DateTime  @default(now())
-    shop        Shop      @relation(fields: [shopId], references: [shopId])
-    inventory   Inventory @relation(fields: [inventoryId], references: [inventoryId])
-    product     Product   @relation(fields: [productId], references: [productId])
+    performerEmail String
+    performedAt    DateTime  @default(now())
+    shop           Shop      @relation(fields: [shopId], references: [shopId])
+    inventory      Inventory @relation(fields: [inventoryId], references: [inventoryId])
+    product        Product   @relation(fields: [productId], references: [productId])
+    performer      Auth      @relation(fields: [performerEmail], references: [email])
 }

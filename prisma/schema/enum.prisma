@@ -11,7 +11,7 @@ enum Status {
 enum InventoryActionType {
     INIT
     MANUAL_UPDATE
-    SALE
-    RESTOCK
+    STOCK_IN
+    STOCK_OUT
     ADJUSTMENT
 }

@@ -19,7 +19,7 @@ export const createShopOwner = catchAsync(
       maxAge: 1000 * 60 * 60,
     });
 
-    res.cookie("refreshToken", accessToken, {
+    res.cookie("refreshToken", refreshToken, {
       secure: true,
       httpOnly: true,
       sameSite: "none",
@@ -38,8 +38,10 @@ export const createShopOwner = catchAsync(
 const getMyProfile = catchAsync(async (req: Request, res: Response) => {
   const result = await shopOwnerServices.getMyProfile(req?.user?.ownerId);
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: 200,
     success: true,
+    message: "Data fetched successfully",
     data: result,
   });
 });
@@ -50,25 +52,32 @@ const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
     req.body,
   );
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: 200,
     success: true,
+    message: "Data updated successfully",
     data: result,
   });
 });
 
 const deleteMyAccount = catchAsync(async (req: Request, res: Response) => {
-  await shopOwnerServices.deleteMyAccount(req?.user?.ownerId);
+  const result = await shopOwnerServices.deleteMyAccount(req?.user?.ownerId);
 
-  res.status(204).json({
+  sendResponse(res, {
+    statusCode: 200,
     success: true,
+    message: "Data deleted successfully",
+    data: result,
   });
 });
 
 const getAllShopOwners = catchAsync(async (_req: Request, res: Response) => {
   const result = await shopOwnerServices.getAllShopOwners();
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: 200,
     success: true,
+    message: "Data fetched successfully",
     data: result,
   });
 });
@@ -78,8 +87,10 @@ const getShopOwnerById = catchAsync(async (req: Request, res: Response) => {
 
   const result = await shopOwnerServices.getShopOwnerById(ownerId as string);
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: 200,
     success: true,
+    message: "Data fetched successfully",
     data: result,
   });
 });
