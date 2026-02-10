@@ -74,6 +74,15 @@ const createProduct = async (
   return result;
 };
 
+const findProductByProductId = async (id: string) => {
+  return await prisma.product.findFirst({
+    where: {
+      productId: id,
+    },
+  });
+};
+
 export const productServices = {
   createProduct,
+  findProductByProductId,
 };

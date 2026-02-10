@@ -3,6 +3,22 @@ import catchAsync from "../../utils/catchAsync";
 import { inventoryServices } from "./inventory.services";
 import sendResponse from "../../utils/sendResponse";
 
+const stockOutInventory = catchAsync(async (req: Request, res: Response) => {
+  const result = await inventoryServices.stockOutInventory(
+    {
+      ...req.body,
+      productId: req.params.productId,
+    },
+    req.user,
+  );
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Stock out successfully",
+    data: result,
+  });
+});
+
 const getMyInventories = catchAsync(async (req: Request, res: Response) => {
   const result = await inventoryServices.getMyInventories(req?.user?.ownerId);
 
@@ -30,20 +46,22 @@ const getInventoryByProduct = catchAsync(
   },
 );
 
-const updateInventory = catchAsync(async (req: Request, res: Response) => {
-  const result = await inventoryServices.updateInventory(
-    req.params.inventoryId as string,
-    req?.user?.ownerId,
-    req.body,
-  );
+const updateInventoryManually = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await inventoryServices.updateInventory(
+      req.params.inventoryId as string,
+      req?.user?.ownerId,
+      req.body,
+    );
 
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Data updated successfully",
-    data: result,
-  });
-});
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Data updated successfully",
+      data: result,
+    });
+  },
+);
 
 const deleteInventory = catchAsync(async (req: Request, res: Response) => {
   const result = await inventoryServices.deleteInventory(
@@ -62,6 +80,7 @@ const deleteInventory = catchAsync(async (req: Request, res: Response) => {
 export const inventoryController = {
   getMyInventories,
   getInventoryByProduct,
-  updateInventory,
+  updateInventoryManually,
   deleteInventory,
+  stockOutInventory,
 };

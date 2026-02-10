@@ -10,6 +10,12 @@ const router = Router();
 // GET all inventories of my shop
 router.get("/", auth(Role.OWNER), inventoryController.getMyInventories);
 
+router.post(
+  "/out/product/:productId",
+  auth(Role.OWNER),
+  inventoryController.stockOutInventory,
+);
+
 // GET inventory by product
 router.get(
   "/product/:productId",
@@ -19,10 +25,10 @@ router.get(
 
 // UPDATE inventory
 router.patch(
-  "/:inventoryId",
+  "manually/:inventoryId",
   auth(Role.OWNER),
   validateRequest(inventoryValidation.updateInventorySchema),
-  inventoryController.updateInventory,
+  inventoryController.updateInventoryManually,
 );
 
 // DELETE inventory

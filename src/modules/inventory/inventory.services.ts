@@ -1,9 +1,11 @@
-import { Inventory } from "../../generated/prisma/client";
+import { Inventory, InventoryActionType } from "../../generated/prisma/client";
 import prisma from "../../config/db";
 import { PrismaTransactionalClient } from "../../types";
 import AppError from "../../error/AppError";
 import { inventoryValidation } from "./inventory.validation";
 import z from "zod";
+import { productServices } from "../product/product.services";
+import { historyServices } from "../history/history.services";
 
 const createInventory = async ({
   tx,
@@ -26,9 +28,60 @@ const createInventory = async ({
   });
 };
 
-type UpdateInventoryPayload = z.infer<
-  typeof inventoryValidation.updateInventorySchema
->;
+const stockOutInventory = async (
+  payload: z.infer<typeof inventoryValidation.stockOutSchema> & {
+    productId: string;
+  },
+  user: any,
+) => {
+  const { productId, quantity, referenceId, note } = payload;
+
+  const product = await productServices.findProductByProductId(productId);
+  if (!product) {
+    throw new AppError(404, "Product not found");
+  }
+  const inventory = await prisma.inventory.findFirst({
+    where: {
+      productId: product.productId,
+    },
+  });
+  if (!inventory) {
+    throw new AppError(404, "Inventory not found");
+  }
+
+  if (inventory.availableQuantity < quantity) {
+    throw new Error("Insufficient stock");
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    const updatedInventory = await tx.inventory.update({
+      where: { inventoryId: inventory.inventoryId },
+      data: {
+        availableQuantity: {
+          decrement: quantity,
+        },
+      },
+    });
+
+    await historyServices.createHistory({
+      tx,
+      payload: {
+        inventoryId: inventory.inventoryId,
+        productId: product.productId,
+        actionType: InventoryActionType.STOCK_OUT,
+        quantityBefore: inventory.availableQuantity,
+        quantityChange: quantity,
+        quantityAfter: updatedInventory.availableQuantity,
+        shopId: inventory.shopId,
+        note: note,
+        referenceId: referenceId,
+        performerEmail: user?.email,
+      },
+    });
+
+    return updatedInventory;
+  });
+};
 
 const getInventoryByProductId = async (productId: string, ownerId: string) => {
   const shop = await prisma.shop.findFirst({
@@ -72,7 +125,7 @@ const getMyInventories = async (ownerId: string) => {
 const updateInventory = async (
   inventoryId: string,
   ownerId: string,
-  payload: UpdateInventoryPayload,
+  payload: z.infer<typeof inventoryValidation.updateInventorySchema>,
 ) => {
   const shop = await prisma.shop.findFirst({
     where: { ownerId },
@@ -137,4 +190,5 @@ export const inventoryServices = {
   getMyInventories,
   updateInventory,
   deleteInventory,
+  stockOutInventory,
 };

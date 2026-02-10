@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { number, z } from "zod";
 
 export const createInventorySchema = z.object({
   shopId: z.string().uuid("Invalid shopId"),
@@ -17,7 +17,14 @@ export const updateInventorySchema = z.object({
   reOrderLevel: z.number().optional(),
 });
 
+export const stockOutSchema = z.object({
+  quantity: z.number(),
+  note: z.string().optional(),
+  referenceId: z.string().optional(),
+});
+
 export const inventoryValidation = {
   createInventorySchema,
   updateInventorySchema,
+  stockOutSchema,
 };

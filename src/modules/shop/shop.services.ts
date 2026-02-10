@@ -17,7 +17,6 @@ const createShop = async (payload: CreateShopPayload) => {
   });
 
   if (existingShop) {
-    console.log(existingShop);
     throw new AppError(409, "User already has a shop");
   }
 

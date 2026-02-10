@@ -4,7 +4,6 @@ import catchAsync from "../../utils/catchAsync";
 import sendResponse from "../../utils/sendResponse";
 
 const createShop = catchAsync(async (req: Request, res: Response) => {
-  console.log(req.user);
   const result = await shopServices.createShop({
     ...req.body,
     ownerId: req?.user?.ownerId,
