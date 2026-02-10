@@ -40,28 +40,42 @@ const stockOutInventory = async (
   if (!product) {
     throw new AppError(404, "Product not found");
   }
-  const inventory = await prisma.inventory.findFirst({
-    where: {
-      productId: product.productId,
-    },
-  });
-  if (!inventory) {
-    throw new AppError(404, "Inventory not found");
-  }
-
-  if (inventory.availableQuantity < quantity) {
-    throw new Error("Insufficient stock");
-  }
 
   return await prisma.$transaction(async (tx) => {
-    const updatedInventory = await tx.inventory.update({
-      where: { inventoryId: inventory.inventoryId },
+    const inventory = await tx.inventory.findFirst({
+      where: {
+        productId: product.productId,
+      },
+    });
+    if (!inventory) {
+      throw new AppError(404, "Inventory not found");
+    }
+
+    const updated = await tx.inventory.updateMany({
+      where: {
+        inventoryId: inventory.inventoryId,
+        availableQuantity: {
+          gte: quantity,
+        },
+      },
       data: {
         availableQuantity: {
           decrement: quantity,
         },
       },
     });
+
+    if (updated.count === 0) {
+      throw new AppError(400, "Insufficient stock");
+    }
+
+    const updatedInventory = await tx.inventory.findUnique({
+      where: { inventoryId: inventory.inventoryId },
+    });
+
+    if (!updatedInventory) {
+      throw new AppError(404, "Inventory not found");
+    }
 
     await historyServices.createHistory({
       tx,

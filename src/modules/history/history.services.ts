@@ -12,7 +12,7 @@ const createHistory = async ({
 }) => {
   return await tx.history.create({
     data: {
-      actionType: "INIT",
+      actionType: payload.actionType,
       inventoryId: payload.inventoryId,
       productId: payload.productId,
       performerEmail: payload.performerEmail,
