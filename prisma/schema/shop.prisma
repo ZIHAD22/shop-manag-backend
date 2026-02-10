@@ -8,4 +8,5 @@ model Shop {
     shopType    String?
     shopOwner   ShopOwner   @relation(fields: [ownerId], references: [id])
     inventories Inventory[]
+    histories   History[]
 }

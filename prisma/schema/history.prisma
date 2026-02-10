@@ -1,0 +1,22 @@
+model History {
+    historyId String @id @default(uuid())
+
+    shopId      String
+    inventoryId String
+    productId   String
+
+    actionType InventoryActionType
+
+    quantityBefore Int
+    quantityChange Int
+    quantityAfter  Int
+
+    referenceId String?
+    note        String?
+
+    performedBy String
+    performedAt DateTime  @default(now())
+    shop        Shop      @relation(fields: [shopId], references: [shopId])
+    inventory   Inventory @relation(fields: [inventoryId], references: [inventoryId])
+    product     Product   @relation(fields: [productId], references: [productId])
+}

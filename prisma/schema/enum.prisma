@@ -7,3 +7,11 @@ enum Status {
     BANED
     APPROVED
 }
+
+enum InventoryActionType {
+    INIT
+    MANUAL_UPDATE
+    SALE
+    RESTOCK
+    ADJUSTMENT
+}

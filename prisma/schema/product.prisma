@@ -9,4 +9,5 @@ model Product {
     texPercentage Int
     createAt      DateTime   @default(now())
     inventory     Inventory?
+    histories     History[]
 }
