@@ -23,8 +23,11 @@ export const stockOutSchema = z.object({
   referenceId: z.string().optional(),
 });
 
+const stockInSchema = stockOutSchema;
+
 export const inventoryValidation = {
   createInventorySchema,
   updateInventorySchema,
   stockOutSchema,
+  stockInSchema,
 };

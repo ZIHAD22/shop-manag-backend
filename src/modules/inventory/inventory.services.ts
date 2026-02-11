@@ -97,6 +97,57 @@ const stockOutInventory = async (
   });
 };
 
+const stockInInventory = async (
+  payload: z.infer<typeof inventoryValidation.stockInSchema> & {
+    productId: string;
+  },
+  user: any,
+) => {
+  const { productId, quantity, referenceId, note } = payload;
+
+  const product = await productServices.findProductByProductId(productId);
+  if (!product) {
+    throw new AppError(404, "Product not found");
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    const inventory = await tx.inventory.findFirst({
+      where: { productId: product.productId },
+    });
+
+    if (!inventory) {
+      throw new AppError(404, "Inventory not found");
+    }
+
+    const updatedInventory = await tx.inventory.update({
+      where: { inventoryId: inventory.inventoryId },
+      data: {
+        availableQuantity: {
+          increment: quantity,
+        },
+      },
+    });
+
+    await historyServices.createHistory({
+      tx,
+      payload: {
+        inventoryId: inventory.inventoryId,
+        productId: product.productId,
+        actionType: InventoryActionType.STOCK_IN,
+        quantityBefore: inventory.availableQuantity,
+        quantityChange: quantity,
+        quantityAfter: updatedInventory.availableQuantity,
+        shopId: inventory.shopId,
+        note,
+        referenceId,
+        performerEmail: user?.email,
+      },
+    });
+
+    return updatedInventory;
+  });
+};
+
 const getInventoryByProductId = async (productId: string, ownerId: string) => {
   const shop = await prisma.shop.findFirst({
     where: { ownerId },
@@ -205,4 +256,5 @@ export const inventoryServices = {
   updateInventory,
   deleteInventory,
   stockOutInventory,
+  stockInInventory,
 };

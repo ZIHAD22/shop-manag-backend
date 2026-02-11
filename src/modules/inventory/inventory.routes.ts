@@ -16,6 +16,12 @@ router.post(
   inventoryController.stockOutInventory,
 );
 
+router.post(
+  "/in/product/:productId",
+  auth(Role.OWNER),
+  inventoryController.stockInInventory,
+);
+
 // GET inventory by product
 router.get(
   "/product/:productId",

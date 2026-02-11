@@ -19,6 +19,22 @@ const stockOutInventory = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const stockInInventory = catchAsync(async (req: Request, res: Response) => {
+  const result = await inventoryServices.stockInInventory(
+    {
+      ...req.body,
+      productId: req.params.productId,
+    },
+    req.user,
+  );
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Stock in successfully",
+    data: result,
+  });
+});
+
 const getMyInventories = catchAsync(async (req: Request, res: Response) => {
   const result = await inventoryServices.getMyInventories(req?.user?.ownerId);
 
@@ -83,4 +99,5 @@ export const inventoryController = {
   updateInventoryManually,
   deleteInventory,
   stockOutInventory,
+  stockInInventory,
 };
