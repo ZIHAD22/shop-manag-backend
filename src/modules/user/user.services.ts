@@ -1,13 +1,62 @@
 import { tokenHelper } from "./../../utils/tokenHelper";
-import { shopOwnerValidation } from "./user.validation";
+import { userValidation } from "./user.validation";
 import { authServices } from "../auth/auth.services";
 import prisma from "../../config/db";
 import z from "zod";
 import config from "../../config";
 import AppError from "../../error/AppError";
+import { Role } from "../../generated/prisma/enums";
+
+const createAdmin = async (
+  payload: z.infer<typeof userValidation.createAdminValidation>,
+) => {
+  const { name, email, userName, phone } = payload.admin;
+
+  const result = await prisma.$transaction(async (tx) => {
+    // call from auth module
+    const user = await authServices.createAuthUser({
+      tx,
+      payload: {
+        userName,
+        email,
+        password: payload.password,
+        role: Role.ADMIN,
+      },
+    });
+
+    const admin = await tx.admin.create({
+      data: {
+        name,
+        email,
+        phone,
+      },
+    });
+
+    return {
+      ...admin,
+      role: user.role,
+      otpVerified: user.otpVerified,
+      status: user.status,
+    };
+  });
+
+  const accessToken = tokenHelper.createAccessToken(
+    { userId: result.id, email: result.email, role: result.role },
+    config.access_secret as string,
+    config.accessTokenExpiresIn as string,
+  );
+
+  const refreshToken = tokenHelper.createAccessToken(
+    { userId: result.id, email: result.email, role: result.role },
+    config.refresh_secret as string,
+    config.refreshTokenExpiresIn as string,
+  );
+
+  return { result, accessToken, refreshToken };
+};
 
 const createShopOwner = async (
-  payload: z.infer<typeof shopOwnerValidation.createShopOwnerValidation>,
+  payload: z.infer<typeof userValidation.createShopOwnerValidation>,
 ) => {
   const { name, email, userName, phone } = payload.shopOwner;
 
@@ -15,10 +64,11 @@ const createShopOwner = async (
     // call from auth module
     const user = await authServices.createAuthUser({
       tx,
-      data: {
+      payload: {
         userName,
         email,
         password: payload.password,
+        role: Role.OWNER,
       },
     });
 
@@ -39,27 +89,22 @@ const createShopOwner = async (
   });
 
   const accessToken = tokenHelper.createAccessToken(
-    { ownerId: result.id, email: result.email, role: result.role },
+    { userId: result.id, email: result.email, role: result.role },
     config.access_secret as string,
     config.accessTokenExpiresIn as string,
   );
 
   const refreshToken = tokenHelper.createAccessToken(
-    { ownerId: result.id, email: result.email, role: result.role },
+    { userId: result.id, email: result.email, role: result.role },
     config.refresh_secret as string,
     config.refreshTokenExpiresIn as string,
   );
 
   return { result, accessToken, refreshToken };
 };
-
-type UpdateShopOwnerPayload = z.infer<
-  typeof shopOwnerValidation.updateShopOwnerValidation
->;
-
-const getMyProfile = async (ownerId: string) => {
+const getMyProfile = async (userId: string) => {
   const owner = await prisma.shopOwner.findUnique({
-    where: { id: ownerId },
+    where: { id: userId },
   });
 
   if (!owner) {
@@ -70,11 +115,11 @@ const getMyProfile = async (ownerId: string) => {
 };
 
 const updateMyProfile = async (
-  ownerId: string,
-  payload: UpdateShopOwnerPayload,
+  userId: string,
+  payload: z.infer<typeof userValidation.updateShopOwnerValidation>,
 ) => {
   const owner = await prisma.shopOwner.findUnique({
-    where: { id: ownerId },
+    where: { id: userId },
   });
 
   if (!owner) {
@@ -82,7 +127,7 @@ const updateMyProfile = async (
   }
 
   return prisma.shopOwner.update({
-    where: { id: ownerId },
+    where: { id: userId },
     data: {
       ...(payload.name !== undefined && { name: payload.name }),
       ...(payload.phone !== undefined && { phone: payload.phone }),
@@ -93,9 +138,9 @@ const updateMyProfile = async (
   });
 };
 
-const deleteMyAccount = async (ownerId: string) => {
+const deleteMyAccount = async (userId: string) => {
   const owner = await prisma.shopOwner.findUnique({
-    where: { id: ownerId },
+    where: { id: userId },
   });
 
   if (!owner) {
@@ -104,7 +149,7 @@ const deleteMyAccount = async (ownerId: string) => {
 
   // Auth will be deleted automatically (onDelete: Cascade)
   return prisma.shopOwner.delete({
-    where: { id: ownerId },
+    where: { id: userId },
   });
 };
 
@@ -112,9 +157,9 @@ const getAllShopOwners = async () => {
   return prisma.shopOwner.findMany();
 };
 
-const getShopOwnerById = async (ownerId: string) => {
+const getShopOwnerById = async (userId: string) => {
   const owner = await prisma.shopOwner.findUnique({
-    where: { id: ownerId },
+    where: { id: userId },
   });
 
   if (!owner) {
@@ -124,11 +169,12 @@ const getShopOwnerById = async (ownerId: string) => {
   return owner;
 };
 
-export const shopOwnerServices = {
+export const userServices = {
   createShopOwner,
   getMyProfile,
   updateMyProfile,
   deleteMyAccount,
   getAllShopOwners,
   getShopOwnerById,
+  createAdmin,
 };

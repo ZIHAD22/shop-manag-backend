@@ -3,13 +3,14 @@ model Auth {
     userName    String?    @unique
     email       String     @unique
     password    String
-    role        Role?      @default(OWNER)
+    role        Role
     otpVerified Boolean?   @default(false)
     status      Status?    @default(APPROVED)
     createdAt   DateTime?  @default(now())
     updatedAt   DateTime?  @updatedAt
     shopOwner   ShopOwner?
     histories   History[]
+    admin       Admin?
 }
 
 model ShopOwner {
@@ -22,4 +23,16 @@ model ShopOwner {
     updatedAt  DateTime? @updatedAt
     user       Auth      @relation(fields: [email], references: [email], onDelete: Cascade)
     shop       Shop?
+}
+
+model Admin {
+    id         String   @id @default(uuid())
+    name       String
+    email      String   @unique
+    phone      String?
+    profilePic String?
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    user Auth @relation(fields: [email], references: [email], onDelete: Cascade)
 }

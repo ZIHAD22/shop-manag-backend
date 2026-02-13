@@ -22,7 +22,7 @@ const createProduct = async (
 ) => {
   const shop = await prisma.shop.findFirst({
     where: {
-      ownerId: user.ownerId,
+      userId: user.ownerId,
     },
   });
 
@@ -82,13 +82,13 @@ const findProductByProductId = async (id: string) => {
   });
 };
 
-const findShowOwnerAllProduct = async (ownerId: string) => {
+const findShowOwnerAllProduct = async (userId: string) => {
   console.log(ownerId);
   return prisma.product.findMany({
     where: {
       inventory: {
         shop: {
-          ownerId: ownerId,
+          userId: userId,
         },
       },
     },

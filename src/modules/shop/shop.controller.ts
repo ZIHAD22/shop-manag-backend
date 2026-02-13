@@ -6,7 +6,7 @@ import sendResponse from "../../utils/sendResponse";
 const createShop = catchAsync(async (req: Request, res: Response) => {
   const result = await shopServices.createShop({
     ...req.body,
-    ownerId: req?.user?.ownerId,
+    userId: req?.user?.userId,
   });
 
   console.log(result);
@@ -20,7 +20,7 @@ const createShop = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getMyShop = catchAsync(async (req: Request, res: Response) => {
-  const result = await shopServices.findMyShop(req?.user?.ownerId);
+  const result = await shopServices.findMyShop(req?.user?.userId);
 
   sendResponse(res, {
     statusCode: 200,
@@ -59,7 +59,7 @@ const updateShop = catchAsync(async (req: Request, res: Response) => {
 
   const result = await shopServices.updateShop(
     shopId as string,
-    req?.user?.ownerId,
+    req?.user?.userId,
     req.body,
   );
 
@@ -76,7 +76,7 @@ const deleteShop = catchAsync(async (req: Request, res: Response) => {
 
   const result = await shopServices.deleteShop(
     shopId as string,
-    req?.user?.ownerId,
+    req?.user?.userId,
   );
 
   sendResponse(res, {

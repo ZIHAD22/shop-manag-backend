@@ -6,26 +6,29 @@ import config from "../../config";
 import { tokenHelper } from "../../utils/tokenHelper";
 import AppError from "../../error/AppError";
 import { PrismaTransactionalClient } from "../../types";
+import { Role } from "../../generated/prisma/enums";
 
 const createAuthUser = async ({
   tx,
-  data,
+  payload,
 }: {
   tx: PrismaTransactionalClient;
-  data: {
+  payload: {
     userName: string;
     email: string;
     password: string;
+    role: Role;
   };
 }) => {
+  console.log(payload);
   const user = await tx.auth.findFirst({
     where: {
       OR: [
         {
-          email: data.email,
+          email: payload.email,
         },
         {
-          userName: data.userName,
+          userName: payload.userName,
         },
       ],
     },
@@ -35,11 +38,12 @@ const createAuthUser = async ({
     throw new AppError(409, "User name or Email already exist!");
   }
 
-  const result = tx.auth.create({
+  const result = await tx.auth.create({
     data: {
-      userName: data.userName,
-      email: data.email,
-      password: data.password,
+      userName: payload.userName,
+      email: payload.email,
+      password: payload.password,
+      role: payload.role,
     },
   });
 
@@ -73,13 +77,13 @@ const authLogin = async (payload: z.infer<typeof authValidation.authLogin>) => {
   });
 
   const accessToken = tokenHelper.createAccessToken(
-    { ownerId: shopOwner?.id, email: user.email, role: user.role },
+    { userId: shopOwner?.id, email: user.email, role: user.role },
     config.access_secret as string,
     config.accessTokenExpiresIn as string,
   );
 
   const refreshToken = tokenHelper.createAccessToken(
-    { ownerId: shopOwner?.id, email: user.email, role: user.role },
+    { userId: shopOwner?.id, email: user.email, role: user.role },
     config.refresh_secret as string,
     config.refreshTokenExpiresIn as string,
   );

@@ -36,7 +36,7 @@ const stockInInventory = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getMyInventories = catchAsync(async (req: Request, res: Response) => {
-  const result = await inventoryServices.getMyInventories(req?.user?.ownerId);
+  const result = await inventoryServices.getMyInventories(req?.user?.userId);
 
   sendResponse(res, {
     statusCode: 200,
@@ -50,7 +50,7 @@ const getInventoryByProduct = catchAsync(
   async (req: Request, res: Response) => {
     const result = await inventoryServices.getInventoryByProductId(
       req?.params?.productId as string,
-      req?.user?.ownerId,
+      req?.user?.userId,
     );
 
     sendResponse(res, {
@@ -83,7 +83,7 @@ const deleteInventoryProductId = catchAsync(
   async (req: Request, res: Response) => {
     const result = await inventoryServices.deleteInventoryByProductId(
       req.params.productId as string,
-      req?.user?.ownerId,
+      req?.user?.userId,
     );
 
     sendResponse(res, {

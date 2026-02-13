@@ -4,7 +4,7 @@ import { shopValidation } from "./shop.validation";
 import AppError from "../../error/AppError";
 
 type CreateShopPayload = z.infer<typeof shopValidation.createShopSchema> & {
-  ownerId: string;
+  userId: string;
 };
 
 type UpdateShopPayload = z.infer<typeof shopValidation.updateShopSchema>;
@@ -12,7 +12,7 @@ type UpdateShopPayload = z.infer<typeof shopValidation.updateShopSchema>;
 const createShop = async (payload: CreateShopPayload) => {
   const existingShop = await prisma.shop.findFirst({
     where: {
-      ownerId: payload.ownerId,
+      userId: payload.ownerId,
     },
   });
 
@@ -22,7 +22,7 @@ const createShop = async (payload: CreateShopPayload) => {
 
   return prisma.shop.create({
     data: {
-      ownerId: payload.ownerId,
+      userId: payload.ownerId,
       shopName: payload.shopName,
       shopAddress: payload.shopAddress,
       shopPhone: payload.shopPhone,
@@ -32,7 +32,7 @@ const createShop = async (payload: CreateShopPayload) => {
   });
 };
 
-const findMyShop = async (ownerId: string) => {
+const findMyShop = async (userId: string) => {
   return prisma.shop.findFirst({
     where: { ownerId },
   });
@@ -56,7 +56,7 @@ const findAllShop = async () => {
 
 const updateShop = async (
   shopId: string,
-  ownerId: string,
+  userId: string,
   payload: UpdateShopPayload,
 ) => {
   const shop = await prisma.shop.findFirst({
@@ -89,7 +89,7 @@ const updateShop = async (
   });
 };
 
-const deleteShop = async (shopId: string, ownerId: string) => {
+const deleteShop = async (shopId: string, userId: string) => {
   const shop = await prisma.shop.findFirst({
     where: {
       id: shopId,

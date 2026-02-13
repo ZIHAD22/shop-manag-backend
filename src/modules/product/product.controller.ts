@@ -16,7 +16,7 @@ const createProduct = catchAsync(async (req: Request, res: Response) => {
 const findShopOwnerAllProduct = catchAsync(
   async (req: Request, res: Response) => {
     const result = await productServices.findShowOwnerAllProduct(
-      req?.user?.ownerId as string,
+      req?.user?.userId as string,
     );
     sendResponse(res, {
       statusCode: 200,
