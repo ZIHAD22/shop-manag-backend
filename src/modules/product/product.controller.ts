@@ -13,6 +13,21 @@ const createProduct = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const findShopOwnerAllProduct = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await productServices.findShowOwnerAllProduct(
+      req?.user?.ownerId as string,
+    );
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "All product fetch successfully",
+      data: result,
+    });
+  },
+);
+
 export const productController = {
   createProduct,
+  findShopOwnerAllProduct,
 };

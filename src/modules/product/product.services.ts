@@ -82,7 +82,21 @@ const findProductByProductId = async (id: string) => {
   });
 };
 
+const findShowOwnerAllProduct = async (ownerId: string) => {
+  console.log(ownerId);
+  return prisma.product.findMany({
+    where: {
+      inventory: {
+        shop: {
+          ownerId: ownerId,
+        },
+      },
+    },
+  });
+};
+
 export const productServices = {
   createProduct,
   findProductByProductId,
+  findShowOwnerAllProduct,
 };

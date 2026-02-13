@@ -14,4 +14,6 @@ router.post(
   productController.createProduct,
 );
 
+router.get("/", auth(Role.OWNER), productController.findShopOwnerAllProduct);
+
 export const productRouter = router;

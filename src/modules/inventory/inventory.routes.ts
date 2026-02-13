@@ -29,9 +29,9 @@ router.get(
   inventoryController.getInventoryByProduct,
 );
 
-// UPDATE inventory
+// UPDATE inventory by inventory id
 router.patch(
-  "manually/:inventoryId",
+  "/manually/inventory/:inventoryId",
   auth(Role.OWNER),
   validateRequest(inventoryValidation.updateInventorySchema),
   inventoryController.updateInventoryManually,
@@ -39,9 +39,9 @@ router.patch(
 
 // DELETE inventory
 router.delete(
-  "/:inventoryId",
+  "/product/:productId",
   auth(Role.OWNER),
-  inventoryController.deleteInventory,
+  inventoryController.deleteInventoryProductId,
 );
 
 export const inventoryRouter = router;

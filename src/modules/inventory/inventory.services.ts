@@ -162,7 +162,14 @@ const getInventoryByProductId = async (productId: string, ownerId: string) => {
       productId,
       shopId: shop.shopId,
     },
-    include: { product: true, histories: true },
+    include: {
+      product: true,
+      histories: {
+        orderBy: {
+          performedAt: "desc",
+        },
+      },
+    },
   });
 
   if (!inventory) {
@@ -189,8 +196,71 @@ const getMyInventories = async (ownerId: string) => {
 
 const updateInventory = async (
   inventoryId: string,
-  ownerId: string,
+  user: any,
   payload: z.infer<typeof inventoryValidation.updateInventorySchema>,
+) => {
+  const result = prisma.$transaction(async (tx) => {
+    const shop = await tx.shop.findFirst({
+      where: { ownerId: user?.ownerId },
+    });
+
+    if (!shop) {
+      throw new AppError(404, "Shop not found");
+    }
+
+    const inventory = await tx.inventory.findFirst({
+      where: {
+        inventoryId,
+        shopId: shop.shopId,
+      },
+    });
+
+    if (!inventory) {
+      throw new AppError(404, "Inventory not found");
+    }
+
+    const updatedInventoryData = await tx.inventory.update({
+      where: { inventoryId },
+      data: {
+        ...(payload.availableQuantity !== undefined && {
+          availableQuantity: payload.availableQuantity,
+        }),
+        ...(payload.reOrderLevel !== undefined && {
+          reOrderLevel: payload.reOrderLevel,
+        }),
+      },
+    });
+
+    const history = await historyServices.createHistory({
+      tx,
+      payload: {
+        inventoryId: inventory.inventoryId,
+        productId: inventory.productId,
+        actionType: InventoryActionType.MANUAL_UPDATE,
+        quantityBefore: inventory.availableQuantity,
+        quantityChange:
+          inventory.availableQuantity > updatedInventoryData.availableQuantity
+            ? inventory.availableQuantity -
+              updatedInventoryData.availableQuantity
+            : updatedInventoryData.availableQuantity -
+              inventory.availableQuantity,
+        quantityAfter: updatedInventoryData.availableQuantity,
+        shopId: shop.shopId,
+        note: "Manually Update Inventory Data",
+        referenceId: "Manually Update Inventory Data",
+        performerEmail: user.email,
+      },
+    });
+
+    return updatedInventoryData;
+  });
+
+  return result;
+};
+
+const deleteInventoryByProductId = async (
+  productId: string,
+  ownerId: string,
 ) => {
   const shop = await prisma.shop.findFirst({
     where: { ownerId },
@@ -202,7 +272,7 @@ const updateInventory = async (
 
   const inventory = await prisma.inventory.findFirst({
     where: {
-      inventoryId,
+      productId: productId,
       shopId: shop.shopId,
     },
   });
@@ -211,41 +281,8 @@ const updateInventory = async (
     throw new AppError(404, "Inventory not found");
   }
 
-  return prisma.inventory.update({
-    where: { inventoryId },
-    data: {
-      ...(payload.availableQuantity !== undefined && {
-        availableQuantity: payload.availableQuantity,
-      }),
-      ...(payload.reOrderLevel !== undefined && {
-        reOrderLevel: payload.reOrderLevel,
-      }),
-    },
-  });
-};
-
-const deleteInventory = async (inventoryId: string, ownerId: string) => {
-  const shop = await prisma.shop.findFirst({
-    where: { ownerId },
-  });
-
-  if (!shop) {
-    throw new AppError(404, "Shop not found");
-  }
-
-  const inventory = await prisma.inventory.findFirst({
-    where: {
-      inventoryId,
-      shopId: shop.shopId,
-    },
-  });
-
-  if (!inventory) {
-    throw new AppError(404, "Inventory not found");
-  }
-
-  return prisma.inventory.delete({
-    where: { inventoryId },
+  return prisma.product.delete({
+    where: { productId },
   });
 };
 
@@ -254,7 +291,7 @@ export const inventoryServices = {
   getInventoryByProductId,
   getMyInventories,
   updateInventory,
-  deleteInventory,
+  deleteInventoryByProductId,
   stockOutInventory,
   stockInInventory,
 };

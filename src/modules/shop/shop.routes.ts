@@ -26,11 +26,11 @@ router.patch(
   shopController.updateShop,
 );
 
-// DELETE my shop (owner)
-router.delete("/:shopId", auth(Role.OWNER), shopController.deleteShop);
+// DELETE my shop (admin)
+router.delete("/:shopId", auth(Role.ADMIN), shopController.deleteShop);
 
 // GET single shop (admin)
-router.get("/:shopId", auth(Role.ADMIN), shopController.getShopById);
+router.get("/:shopId", auth(Role.OWNER), shopController.getShopById);
 
 // GET all shops (admin)
 router.get("/", auth(Role.ADMIN), shopController.getAllShops);

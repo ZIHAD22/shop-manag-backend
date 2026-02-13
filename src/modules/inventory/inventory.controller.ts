@@ -66,7 +66,7 @@ const updateInventoryManually = catchAsync(
   async (req: Request, res: Response) => {
     const result = await inventoryServices.updateInventory(
       req.params.inventoryId as string,
-      req?.user?.ownerId,
+      req?.user,
       req.body,
     );
 
@@ -79,25 +79,27 @@ const updateInventoryManually = catchAsync(
   },
 );
 
-const deleteInventory = catchAsync(async (req: Request, res: Response) => {
-  const result = await inventoryServices.deleteInventory(
-    req.params.inventoryId as string,
-    req?.user?.ownerId,
-  );
+const deleteInventoryProductId = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await inventoryServices.deleteInventoryByProductId(
+      req.params.productId as string,
+      req?.user?.ownerId,
+    );
 
-  sendResponse(res, {
-    statusCode: 200,
-    success: true,
-    message: "Data deleted successfully",
-    data: result,
-  });
-});
+    sendResponse(res, {
+      statusCode: 200,
+      success: true,
+      message: "Data deleted successfully",
+      data: result,
+    });
+  },
+);
 
 export const inventoryController = {
   getMyInventories,
   getInventoryByProduct,
   updateInventoryManually,
-  deleteInventory,
+  deleteInventoryProductId,
   stockOutInventory,
   stockInInventory,
 };

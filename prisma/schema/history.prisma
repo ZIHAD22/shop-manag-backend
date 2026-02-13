@@ -17,7 +17,7 @@ model History {
     performerEmail String
     performedAt    DateTime  @default(now())
     shop           Shop      @relation(fields: [shopId], references: [shopId])
-    inventory      Inventory @relation(fields: [inventoryId], references: [inventoryId])
-    product        Product   @relation(fields: [productId], references: [productId])
+    inventory      Inventory @relation(fields: [inventoryId], references: [inventoryId], onDelete: Cascade)
+    product        Product   @relation(fields: [productId], references: [productId], onDelete: Cascade)
     performer      Auth      @relation(fields: [performerEmail], references: [email])
 }
