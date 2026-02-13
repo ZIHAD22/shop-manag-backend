@@ -18,6 +18,23 @@ const createAuthUser = async ({
     password: string;
   };
 }) => {
+  const user = await tx.auth.findFirst({
+    where: {
+      OR: [
+        {
+          email: data.email,
+        },
+        {
+          userName: data.userName,
+        },
+      ],
+    },
+  });
+
+  if (user) {
+    throw new AppError(409, "User name or Email already exist!");
+  }
+
   const result = tx.auth.create({
     data: {
       userName: data.userName,
