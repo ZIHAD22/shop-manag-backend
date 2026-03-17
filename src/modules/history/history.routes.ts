@@ -12,5 +12,6 @@ router.get(
 );
 router.get("/product/:productId", historyController.getHistoryByProductId);
 router.get("/performer/:email", historyController.getHistoryByPerformer);
+router.get("/shop/:shopId", historyController.getHistoryByShopId);
 
 export const historyRouter = router;

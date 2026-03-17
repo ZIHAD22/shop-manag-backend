@@ -58,10 +58,19 @@ const getHistoriesByPerformer = async (email: string) => {
   });
 };
 
+const getHistoryByShopId = async (id: string) => {
+  return prisma.history.findMany({
+    where: {
+      shopId: id,
+    },
+  });
+};
+
 export const historyServices = {
   createHistory,
   getHistoriesById,
   getHistoriesByInventoryId,
   getHistoriesByProductId,
   getHistoriesByPerformer,
+  getHistoryByShopId,
 };

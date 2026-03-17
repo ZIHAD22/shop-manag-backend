@@ -5,9 +5,7 @@ const createShopSchema = z.object({
 
   shopAddress: z.string().min(5, "Shop address is required"),
 
-  shopPhone: z
-    .string()
-    .regex(/^\+8801[3-9]\d{8}$/, "Invalid Bangladeshi phone number"),
+  shopPhone: z.string(),
 
   shopEmail: z.email("Invalid shop email"),
 

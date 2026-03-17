@@ -69,9 +69,24 @@ const getHistoryByPerformer = catchAsync(
   },
 );
 
+const getHistoryByShopId = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { shopId } = req.params;
+
+    const result = await historyServices.getHistoryByShopId(shopId as string);
+
+    sendResponse(res, {
+      success: true,
+      message: "History retrieved successfully",
+      data: result,
+    });
+  },
+);
+
 export const historyController = {
   getHistoryById,
   getHistoryByInventoryId,
   getHistoryByProductId,
   getHistoryByPerformer,
+  getHistoryByShopId,
 };

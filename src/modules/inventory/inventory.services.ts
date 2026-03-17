@@ -150,7 +150,7 @@ const stockInInventory = async (
 
 const getInventoryByProductId = async (productId: string, userId: string) => {
   const shop = await prisma.shop.findFirst({
-    where: { ownerId },
+    where: { ownerId: userId },
   });
 
   if (!shop) {
@@ -181,7 +181,7 @@ const getInventoryByProductId = async (productId: string, userId: string) => {
 
 const getMyInventories = async (userId: string) => {
   const shop = await prisma.shop.findFirst({
-    where: { ownerId },
+    where: { ownerId: userId },
   });
 
   if (!shop) {
@@ -201,7 +201,7 @@ const updateInventory = async (
 ) => {
   const result = prisma.$transaction(async (tx) => {
     const shop = await tx.shop.findFirst({
-      where: { userId: user?.ownerId },
+      where: { ownerId: user?.userId },
     });
 
     if (!shop) {
@@ -263,7 +263,7 @@ const deleteInventoryByProductId = async (
   userId: string,
 ) => {
   const shop = await prisma.shop.findFirst({
-    where: { ownerId },
+    where: { ownerId: userId },
   });
 
   if (!shop) {
